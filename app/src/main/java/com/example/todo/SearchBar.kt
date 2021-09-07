@@ -54,11 +54,12 @@ fun CustomSearchBar(
                 )
             ) {
                 TextField(
-                    modifier = Modifier.onFocusChanged { isExpanded = !isExpanded },
+                    modifier = Modifier.onFocusChanged { isExpanded = !isExpanded }
+                        .fillMaxWidth(),
                     value = searchBarText,
                     onValueChange = { searchBarText = it },
                     colors = TextFieldDefaults.textFieldColors(
-                        backgroundColor = Color.Transparent,
+                        backgroundColor = MaterialTheme.colors.onSurface.copy(alpha = 0.2f),
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent
                     ),

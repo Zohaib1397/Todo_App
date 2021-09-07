@@ -21,6 +21,7 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
+import com.example.todo.CustomDivider
 import com.example.todo.CustomSearchBar
 import com.example.todo.LayoutSwitcher
 import com.example.todo.TodoCard
@@ -36,25 +37,26 @@ class Main_Fragment : Fragment(){
         return ComposeView(requireContext()).apply {
             setContent {
                 TodoTheme {
-                    // A surface container using the 'background' color from the theme
                     Surface(color = MaterialTheme.colors.background) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .animateContentSize(
-                                    animationSpec = tween(
-                                        durationMillis = 300,
-                                        easing = LinearOutSlowInEasing
-                                    )
-                                ),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Top,
-                        ){
-                            Spacer(modifier = Modifier.height(15.dp))
-                            CustomSearchBar()
-                            Spacer(modifier = Modifier.height(15.dp))
-                            Spacer(modifier = Modifier.height(90.dp))
-                            TodoCard()
+                        Box(modifier = Modifier.fillMaxSize()){
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .animateContentSize(
+                                        animationSpec = tween(
+                                            durationMillis = 300,
+                                            easing = LinearOutSlowInEasing
+                                        )
+                                    ),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Top,
+                            ) {
+                                CustomSearchBar()
+                                Spacer(modifier = Modifier.height(15.dp))
+                                LayoutSwitcher()
+                                Spacer(modifier = Modifier.height(15.dp))
+                                TodoCard()
+                            }
                         }
                     }
                 }
@@ -88,10 +90,12 @@ fun showPreview(){
                     verticalArrangement = Arrangement.Top,
                 ) {
                     CustomSearchBar()
-                    Spacer(modifier = Modifier.height(15.dp))
                     LayoutSwitcher()
-                    Spacer(modifier = Modifier.height(90.dp))
-                    TodoCard()
+                    CustomDivider("Pinned Todo")
+                    Spacer(modifier = Modifier.height(15.dp))
+                    TodoCard(cardColor = Color.Yellow)
+                    Spacer(modifier = Modifier.height(15.dp))
+                    CustomDivider("Unpinned Todo")
                 }
             }
         }

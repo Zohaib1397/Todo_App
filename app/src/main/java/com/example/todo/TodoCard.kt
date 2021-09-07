@@ -2,6 +2,7 @@ package com.example.todo
 
 import android.content.res.Configuration
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -9,6 +10,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -17,18 +19,22 @@ import androidx.compose.ui.unit.dp
 import com.example.todo.ui.theme.TodoTheme
 
 @Composable
-fun TodoCard(){
+fun TodoCard(
+    cardColor: Color = MaterialTheme.colors.surface
+){
     var isExpanded by remember {mutableStateOf(false)}
     val rotateState by animateFloatAsState(
         if(isExpanded) 180f else 0f
     )
     Card(
         //TODO(Enable This Comment)
-//        modifier = Modifier.fillMaxWidth(0.9f),
+        modifier = Modifier.fillMaxWidth(0.9f),
         shape = RoundedCornerShape(12.dp),
         elevation = 5.dp
     ) {
-        Column(){
+        Column(
+            modifier = Modifier.background(color = cardColor)
+        ){
             Text(
                 text = "Notes Title",
                 fontWeight = FontWeight(700),
