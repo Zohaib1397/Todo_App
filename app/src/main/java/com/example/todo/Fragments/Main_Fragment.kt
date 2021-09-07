@@ -22,6 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import com.example.todo.CustomSearchBar
+import com.example.todo.LayoutSwitcher
 import com.example.todo.TodoCard
 import com.example.todo.ui.theme.TodoTheme
 
@@ -52,7 +53,6 @@ class Main_Fragment : Fragment(){
                             Spacer(modifier = Modifier.height(15.dp))
                             CustomSearchBar()
                             Spacer(modifier = Modifier.height(15.dp))
-                            Divider(color = Color.Gray)
                             Spacer(modifier = Modifier.height(90.dp))
                             TodoCard()
                         }
@@ -87,10 +87,9 @@ fun showPreview(){
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Top,
                 ) {
-                    Spacer(modifier = Modifier.height(15.dp))
                     CustomSearchBar()
                     Spacer(modifier = Modifier.height(15.dp))
-                    Divider(color = Color.Gray)
+                    LayoutSwitcher()
                     Spacer(modifier = Modifier.height(90.dp))
                     TodoCard()
                 }

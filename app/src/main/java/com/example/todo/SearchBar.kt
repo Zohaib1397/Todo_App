@@ -7,6 +7,8 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
@@ -15,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -23,53 +26,68 @@ import com.example.todo.ui.theme.TodoTheme
 
 @ExperimentalMaterialApi
 @Composable
-fun CustomSearchBar() {
+fun CustomSearchBar(
+    placeHolder:String = "Search",
+    painter: Painter = painterResource(R.drawable.ic_search),
+    contentDescription:String = "Search",
+    searchedItems: List<String> = listOf("Sample Text","Second Text")
+) {
     var isExpanded by remember { mutableStateOf(true) }
     var searchBarText by remember { mutableStateOf("") }
     Surface(
-        modifier = Modifier.fillMaxWidth(0.9f),
-        shape = MaterialTheme.shapes.small,
+        modifier = Modifier.fillMaxWidth(),
         elevation = 5.dp
     ) {
-        Column(
-            modifier = Modifier.animateContentSize(
-                animationSpec = tween(
-                    durationMillis = 300,
-                    easing = LinearOutSlowInEasing
-                )
-            )
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth(0.9f)
+                .padding(30.dp),
+            shape = RoundedCornerShape(10.dp),
+            elevation = 5.dp
         ) {
-            TextField(
-                modifier = Modifier.onFocusChanged { isExpanded = !isExpanded },
-                value = searchBarText,
-                onValueChange = { searchBarText = it },
-                colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = Color.Transparent,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent
-                ),
-                shape = MaterialTheme.shapes.large,
-                label = {
-                    Text("Search")
-                },
-                leadingIcon = {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_search),
-                        contentDescription = "Search"
-                    )
-                }
-            )
-            if (isExpanded) {
-                Divider(color = Color.Gray)
-                Text(
-                    "Sample Text",
-                    modifier = Modifier.padding(
-                        start = 20.dp,
-                        top = 12.dp,
-                        bottom = 12.dp
+            Column(
+                modifier = Modifier.animateContentSize(
+                    animationSpec = tween(
+                        durationMillis = 300,
+                        easing = LinearOutSlowInEasing
                     )
                 )
-                //TODO("Show List of Previous Search")
+            ) {
+                TextField(
+                    modifier = Modifier.onFocusChanged { isExpanded = !isExpanded },
+                    value = searchBarText,
+                    onValueChange = { searchBarText = it },
+                    colors = TextFieldDefaults.textFieldColors(
+                        backgroundColor = Color.Transparent,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent
+                    ),
+                    shape = MaterialTheme.shapes.large,
+                    label = {
+                        Text(placeHolder)
+                    },
+                    leadingIcon = {
+                        Icon(
+                            painter = painter,
+                            contentDescription = contentDescription
+                        )
+                    }
+                )
+                if (!isExpanded) {
+                    LazyColumn(){
+                        items(searchedItems){ item ->
+                            Divider(color = Color.Gray)
+                            Text(
+                                item,
+                                modifier = Modifier.padding(
+                                start = 20.dp,
+                                top = 12.dp,
+                                bottom = 12.dp
+                                )
+                            )
+                        }
+                    }
+                }
             }
         }
     }
