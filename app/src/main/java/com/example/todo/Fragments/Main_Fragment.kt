@@ -21,10 +21,7 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
-import com.example.todo.CustomDivider
-import com.example.todo.CustomSearchBar
-import com.example.todo.LayoutSwitcher
-import com.example.todo.TodoCard
+import com.example.todo.*
 import com.example.todo.ui.theme.TodoTheme
 
 class Main_Fragment : Fragment(){
@@ -51,11 +48,13 @@ class Main_Fragment : Fragment(){
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 verticalArrangement = Arrangement.Top,
                             ) {
-                                CustomSearchBar()
-                                Spacer(modifier = Modifier.height(15.dp))
+                                CustomSearchBar(searchedItems = SearchItemsList.itemsList)
                                 LayoutSwitcher()
+                                CustomDivider("Pinned Todo")
                                 Spacer(modifier = Modifier.height(15.dp))
-                                TodoCard()
+                                TodoCard(cardColor = Color.Yellow)
+                                Spacer(modifier = Modifier.height(15.dp))
+                                CustomDivider("Unpinned Todo")
                             }
                         }
                     }
@@ -89,7 +88,7 @@ fun showPreview(){
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Top,
                 ) {
-                    CustomSearchBar()
+                    CustomSearchBar(searchedItems =SearchItemsList.itemsList)
                     LayoutSwitcher()
                     CustomDivider("Pinned Todo")
                     Spacer(modifier = Modifier.height(15.dp))

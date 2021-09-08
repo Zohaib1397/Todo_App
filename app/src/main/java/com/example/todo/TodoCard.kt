@@ -1,7 +1,10 @@
 package com.example.todo
 
 import android.content.res.Configuration
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -33,14 +36,17 @@ fun TodoCard(
         elevation = 5.dp
     ) {
         Column(
-            modifier = Modifier.background(color = cardColor)
+            modifier = Modifier.background(color = cardColor).animateContentSize(
+                animationSpec = tween(
+                    durationMillis = 300,
+                    easing = LinearOutSlowInEasing
+                ))
         ){
             Text(
                 text = "Notes Title",
                 fontWeight = FontWeight(700),
                 modifier = Modifier.padding(start = 20.dp,top = 12.dp)
             )
-//            Spacer(modifier = Modifier.height(8.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -58,6 +64,20 @@ fun TodoCard(
                         contentDescription = "DropDown",
                         modifier =Modifier.rotate(rotateState)
                     )
+                }
+            }
+            if(isExpanded){
+                Divider(modifier =Modifier.fillMaxWidth(),color = Color.Gray)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ){
+                    IconButton(onClick = {/*TODO*/}){
+                        Icon(painter = painterResource(R.drawable.ic_edit), contentDescription = "Edit Todo")
+                    }
+                    IconButton(onClick = {/*TODO*/}){
+                        Icon(painter = painterResource(R.drawable.ic_delete), contentDescription = "Delete Todo")
+                    }
                 }
             }
         }

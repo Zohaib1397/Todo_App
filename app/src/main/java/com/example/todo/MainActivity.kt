@@ -1,5 +1,6 @@
 package com.example.todo
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AppCompatActivity
@@ -10,5 +11,16 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         supportFragmentManager.beginTransaction().replace(R.id.fragmentContainer,Main_Fragment()).commit()
+
+
     }
+}
+object saveToSharedPreference :AppCompatActivity(){
+    val sharedPref = getSharedPreferences("SearchBar",Context.MODE_PRIVATE)
+    val editor = sharedPref.edit().also{
+        it.putStringSet("searchedItems",SearchItemsList.itemsList.toSet())
+    }
+}
+object loadFromSharedPreference:AppCompatActivity(){
+    val sharedPref = getSharedPreferences("SearchBar", Context.MODE_PRIVATE)
 }
