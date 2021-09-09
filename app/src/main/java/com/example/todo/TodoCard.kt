@@ -23,6 +23,8 @@ import com.example.todo.ui.theme.TodoTheme
 
 @Composable
 fun TodoCard(
+    todoTitle:String,
+    todoNote:String,
     cardColor: Color = MaterialTheme.colors.surface
 ){
     var isExpanded by remember {mutableStateOf(false)}
@@ -43,7 +45,7 @@ fun TodoCard(
                 ))
         ){
             Text(
-                text = "Notes Title",
+                text = todoTitle,
                 fontWeight = FontWeight(700),
                 modifier = Modifier.padding(start = 20.dp,top = 12.dp)
             )
@@ -53,7 +55,7 @@ fun TodoCard(
                 horizontalArrangement = Arrangement.SpaceBetween
             ){
                 Text(
-                    text = "This is the sample Text",
+                    text = todoNote,
                     modifier = Modifier.padding(start = 20.dp)
                 )
                 IconButton(onClick = {
@@ -93,6 +95,6 @@ fun TodoCard(
 @Composable
 fun previewTodoCard() {
     TodoTheme {
-        TodoCard()
+        TodoCard("Todo Title","This is a sample Todo")
     }
 }

@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
@@ -48,13 +49,18 @@ class Main_Fragment : Fragment(){
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 verticalArrangement = Arrangement.Top,
                             ) {
-                                CustomSearchBar(searchedItems = SearchItemsList.itemsList)
+                                CustomSearchBar(searchedItems =SearchItemsList.itemsList)
                                 LayoutSwitcher()
                                 CustomDivider("Pinned Todo")
                                 Spacer(modifier = Modifier.height(15.dp))
-                                TodoCard(cardColor = Color.Yellow)
                                 Spacer(modifier = Modifier.height(15.dp))
                                 CustomDivider("Unpinned Todo")
+                                Box(
+                                    modifier = Modifier.fillMaxSize().padding(20.dp),
+                                    contentAlignment = Alignment.BottomEnd
+                                ){
+                                    CustomFloatingButton()
+                                }
                             }
                         }
                     }
@@ -92,9 +98,14 @@ fun showPreview(){
                     LayoutSwitcher()
                     CustomDivider("Pinned Todo")
                     Spacer(modifier = Modifier.height(15.dp))
-                    TodoCard(cardColor = Color.Yellow)
                     Spacer(modifier = Modifier.height(15.dp))
                     CustomDivider("Unpinned Todo")
+                    Box(
+                        modifier = Modifier.fillMaxSize().padding(20.dp),
+                        contentAlignment = Alignment.BottomEnd
+                    ){
+                        CustomFloatingButton()
+                    }
                 }
             }
         }

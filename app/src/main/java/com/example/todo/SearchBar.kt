@@ -84,8 +84,6 @@ fun CustomSearchBar(
                     keyboardActions = KeyboardActions(
                         onDone = {
                             SearchItemsList.itemsList.add(searchBarText)
-                            saveToSharedPreference
-
                         }
                     )
                 )
