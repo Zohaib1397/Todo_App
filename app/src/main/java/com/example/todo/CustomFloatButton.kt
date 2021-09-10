@@ -23,12 +23,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.interpolator.view.animation.FastOutLinearInInterpolator
+import com.example.todo.ui.theme.TodoTheme
 
 @Composable
 fun CustomFloatingButton(
-
 ) {
-    var isExpended by remember { mutableStateOf(true) }
+    //---------- userDefinedColor is for the specific color choose by user from the colors database
+    var userDefinedColor:String by remember{mutableStateOf("White")}
+    var noteColorAsThemeState = if (isSystemInDarkTheme()) remember { mutableStateOf("Dark") } else remember { mutableStateOf("Light") }
+
+    var isExpended by remember { mutableStateOf(false) }
     var noteColor =
         if (isSystemInDarkTheme()) remember { mutableStateOf(Color.Black.copy(alpha = 0.45f)) } else remember {
             mutableStateOf(Color.White)
@@ -101,6 +105,7 @@ fun CustomFloatingButton(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
+                        //----------------- Note/To-do title
                         TextField(
                             value = newNoteTitle, onValueChange = {
                                 newNoteTitle = it
@@ -117,6 +122,7 @@ fun CustomFloatingButton(
                             modifier = Modifier.fillMaxWidth(0.8f)
                         )
                         Spacer(modifier = Modifier.height(12.dp))
+                        // ----------------------- This text field is for Note/To-do description
                         TextField(
                             value = newNoteText, onValueChange = {
                                 newNoteText = it
@@ -135,44 +141,67 @@ fun CustomFloatingButton(
                         )
 
                         Spacer(modifier = Modifier.height(12.dp))
+                        //------------------ This part of code is used to display Color Buttons in the bottom floating button menu
+                        //------------------ Used to Trigger note colors
                         Row(
                             horizontalArrangement = Arrangement.SpaceAround
                         ) {
                             RoundedColorButton(
-                                onClick = { noteColor.value = Color.White },
-                                color = MaterialTheme.colors.surface
+                                onClick = {
+                                    noteColor.value = ColorsThemeStateList.itemsList.get("${noteColorAsThemeState.value} White")!!
+                                    userDefinedColor = "White"
+                                          },
+                                color = ColorsThemeStateList.itemsList.get("${noteColorAsThemeState.value} White")!!
                             )
                             RoundedColorButton(
-                                onClick = { noteColor.value = Color.Yellow },
-                                color = Color.Yellow.copy(
-                                    red = 0.8f
-                                ),
+                                onClick = {
+                                    noteColor.value = ColorsThemeStateList.itemsList.get("${noteColorAsThemeState.value} Yellow")!!
+                                    userDefinedColor = "Yellow"
+                                          },
+                                color = ColorsThemeStateList.itemsList.get("${noteColorAsThemeState.value} Yellow")!!,
                                 contentDescription = "Yellow Color"
                             )
                             RoundedColorButton(
-                                onClick = { noteColor.value = Color.Green },
-                                color = Color.Green,
+                                onClick = {
+                                    noteColor.value = ColorsThemeStateList.itemsList.get("${noteColorAsThemeState.value} Green")!!
+                                    userDefinedColor = "Green"
+                                          },
+                                color = ColorsThemeStateList.itemsList.get("${noteColorAsThemeState.value} Green")!!,
                                 contentDescription = "Green Color"
                             )
                             RoundedColorButton(
-                                onClick = { noteColor.value = Color.Red },
-                                color = Color.Red,
+                                onClick = {
+                                    noteColor.value = ColorsThemeStateList.itemsList.get("${noteColorAsThemeState.value} Red")!!
+                                    userDefinedColor = "Red"
+                                          },
+                                color = ColorsThemeStateList.itemsList.get("${noteColorAsThemeState.value} Red")!!,
                                 contentDescription = "Red Color"
                             )
                             RoundedColorButton(
-                                onClick = { noteColor.value = Color.Blue },
-                                color = Color.Blue,
+                                onClick = {
+                                    noteColor.value = ColorsThemeStateList.itemsList.get("${noteColorAsThemeState.value} Blue")!!
+                                    userDefinedColor = "Blue"
+                                          },
+                                color = ColorsThemeStateList.itemsList.get("${noteColorAsThemeState.value} Blue")!!,
                                 contentDescription = "Blue Color"
                             )
                             RoundedColorButton(
-                                onClick = { noteColor.value = Color.Magenta },
-                                color = Color.Magenta,
+                                onClick = {
+                                    noteColor.value = ColorsThemeStateList.itemsList.get("${noteColorAsThemeState.value} Magenta")!!
+                                    userDefinedColor = "Magenta"
+                                          },
+                                color = ColorsThemeStateList.itemsList.get("${noteColorAsThemeState.value} Magenta")!!,
                                 contentDescription = "Magenta Color"
                             )
+
                         }
                         Spacer(modifier = Modifier.height(20.dp))
+                        //------------ Save button to load the data to database
                         Button(
-                            onClick = { /*TODO*/ },
+                            onClick = {
+                                      TodoNotesList.itemsList.add(TodoNote(newNoteTitle,newNoteText,ColorsThemeStateList.itemsList.get("Light ${userDefinedColor}")!!,ColorsThemeStateList.itemsList.get("Dark ${userDefinedColor}")!!))
+                                        isExpended = !isExpended
+                                      },
                             shape = RoundedCornerShape(12.dp),
                             modifier = Modifier
                                 .fillMaxWidth(0.8f)
@@ -220,7 +249,15 @@ fun RoundedColorButton(
 }
 
 @Preview(name = "Light Mode")
+@Preview(
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    showBackground = true
+)
 @Composable
 fun previewFloatingButton() {
-    CustomFloatingButton()
+    TodoTheme(){
+        Surface(color = MaterialTheme.colors.surface){
+            CustomFloatingButton()
+        }
+    }
 }

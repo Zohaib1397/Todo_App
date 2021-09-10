@@ -32,7 +32,6 @@ fun TodoCard(
         if(isExpanded) 180f else 0f
     )
     Card(
-        //TODO(Enable This Comment)
         modifier = Modifier.fillMaxWidth(0.9f),
         shape = RoundedCornerShape(12.dp),
         elevation = 5.dp
