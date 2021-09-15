@@ -1,16 +1,9 @@
 package com.example.todo
 
-import android.content.Context
-import android.preference.Preference
-import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.material.MaterialTheme
 import androidx.compose.ui.graphics.Color
 import com.example.todo.ui.theme.*
 
 object SearchItemsList{
-    val itemsList = mutableListOf<String>()
-}
-object TodoItemsList{
     val itemsList = mutableListOf<String>()
 }
 object ColorsThemeStateList{
@@ -30,6 +23,3 @@ object ColorsThemeStateList{
     )
 }
 data class TodoNote(val noteTitle:String , val noteDescription:String,val lightColor:Color,val darkColor:Color)
-object TodoNotesList{
-    val itemsList = mutableListOf<TodoNote>()
-}

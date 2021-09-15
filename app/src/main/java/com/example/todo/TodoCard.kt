@@ -25,9 +25,12 @@ import com.example.todo.ui.theme.TodoTheme
 fun TodoCard(
     todoTitle:String,
     todoNote:String,
-    cardColor: Color = MaterialTheme.colors.surface
+    cardColor: Color = MaterialTheme.colors.surface,
+    index:Int,
+    todoItems:List<TodoNote>,
+    onRemoveTodo:(TodoNote) -> Unit
 ){
-    var isExpanded by remember {mutableStateOf(false)}
+    var isExpanded by remember{mutableStateOf(false)}
     val rotateState by animateFloatAsState(
         if(isExpanded) 180f else 0f
     )
@@ -37,11 +40,14 @@ fun TodoCard(
         elevation = 5.dp
     ) {
         Column(
-            modifier = Modifier.background(color = cardColor).animateContentSize(
-                animationSpec = tween(
-                    durationMillis = 300,
-                    easing = LinearOutSlowInEasing
-                ))
+            modifier = Modifier
+                .background(color = cardColor)
+                .animateContentSize(
+                    animationSpec = tween(
+                        durationMillis = 300,
+                        easing = LinearOutSlowInEasing
+                    )
+                )
         ){
             Text(
                 text = todoTitle,
@@ -57,9 +63,7 @@ fun TodoCard(
                     text = todoNote,
                     modifier = Modifier.padding(start = 20.dp)
                 )
-                IconButton(onClick = {
-                    isExpanded = !isExpanded
-                }) {
+                IconButton(onClick = { isExpanded = !isExpanded }) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_arrow_down),
                         contentDescription = "DropDown",
@@ -76,7 +80,7 @@ fun TodoCard(
                     IconButton(onClick = {/*TODO*/}){
                         Icon(painter = painterResource(R.drawable.ic_edit), contentDescription = "Edit Todo")
                     }
-                    IconButton(onClick = {/*TODO*/}){
+                    IconButton(onClick = { onRemoveTodo(todoItems[index]) }){
                         Icon(painter = painterResource(R.drawable.ic_delete), contentDescription = "Delete Todo")
                     }
                 }
@@ -94,6 +98,6 @@ fun TodoCard(
 @Composable
 fun previewTodoCard() {
     TodoTheme {
-        TodoCard("Todo Title","This is a sample Todo")
+//        TodoCard("Todo Title","This is a sample Todo" )
     }
 }
