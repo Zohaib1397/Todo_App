@@ -101,8 +101,16 @@ fun CoverWholeScreen(
 
 @Composable
 fun TodoScreen(viewModel:TodoViewModel) {
+    val searchedItemsList= mutableListOf<TodoNote>()
+    for(todo in viewModel.todoItems){
+        if(todo.noteDescription.contains(viewModel.searchBarText.toString())||todo.noteTitle.contains(viewModel.searchBarText.toString())){
+            searchedItemsList.add(todo)
+        }
+    }
     LazyColumn() {
-        itemsIndexed(if(viewModel.searchBarText.isEmpty()) viewModel.todoItems else SearchItemsList.itemsList) { index,note ->
+        itemsIndexed(
+            if(viewModel.searchBarText.isEmpty())viewModel.todoItems else searchedItemsList
+                ) { index,note ->
             Spacer(modifier = Modifier.height(15.dp))
             TodoCard(
                 todoTitle = note.noteTitle,

@@ -83,12 +83,6 @@ fun CustomSearchBar(
                     keyboardActions = KeyboardActions(
                         onSearch = {
                             onAddSearchItem(searchBarText)
-                            for(todo in todoItems){
-                                if(todo.noteDescription.contains(searchBarText.toString())){
-                                    isExpanded = !isExpanded
-                                    SearchItemsList.itemsList.add(todo)
-                                }
-                            }
                         }
                     )
                 )
