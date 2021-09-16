@@ -29,9 +29,14 @@ import com.example.todo.ui.theme.TodoTheme
 @Composable
 //Following Composable Function is StateFull
 fun CustomFloatingButton(
+    newNoteTitle:String,
+    newNoteText:String,
+    onSetNewNoteTitle:(String) -> Unit,
+    onSetNewNoteText :(String) -> Unit,
+    isExpanded: Boolean,
+    onIsExpandedChange: () -> Unit,
     onAddTodoItem:(TodoNote)->Unit
 ) {
-    var isExpanded by remember { mutableStateOf(false) }
     var alignment = animateFloatAsState(
         animationSpec = tween(
         durationMillis = 300,
@@ -49,7 +54,6 @@ fun CustomFloatingButton(
         }
     var roundAsState = animateDpAsState(
         animationSpec = tween(
-            delayMillis = 700,
             durationMillis = 300,
             easing = LinearOutSlowInEasing
         ),
@@ -73,7 +77,7 @@ fun CustomFloatingButton(
     var plusColorAsState = animateColorAsState(
         animationSpec = tween(
             durationMillis = 800,
-            easing = FastOutLinearInEasing
+            easing = LinearOutSlowInEasing
         ),
         targetValue = if (isExpanded) if (isSystemInDarkTheme()) Color.White else Color.Black else Color.White
     )
@@ -88,12 +92,10 @@ fun CustomFloatingButton(
         animationSpec = tween(
             delayMillis = 300,
             durationMillis = 1000,
-            easing = FastOutLinearInEasing
+            easing = LinearOutSlowInEasing
         ),
         targetValue = if (isExpanded) Color.Unspecified else MaterialTheme.colors.primary
     )
-    var (newNoteTitle,setNewNoteTitle) = remember { mutableStateOf("") }
-    var (newNoteText,setNewNoteText) = remember { mutableStateOf("") }
     //This Composable is StateLess
     ButtonScreen(
         paddingAsState,
@@ -102,14 +104,12 @@ fun CustomFloatingButton(
         alignment,
         buttonColorAsState,
         isExpanded,
-        onExpandedChange = {
-                           isExpanded = it
-        },
+        onExpandedChange = onIsExpandedChange,
         noteColor,
         newNoteTitle,
-        setNewNoteTitle,
+        onSetNewNoteTitle,
         newNoteText,
-        setNewNoteText,
+        onSetNewNoteText,
         noteColorAsThemeState,
         userDefinedColor,
         onUserDefinedColorChange = {
@@ -129,9 +129,10 @@ fun ButtonScreen(
     alignment: State<Float>,
     buttonColorAsState: State<Color>,
     isExpanded: Boolean,
-    onExpandedChange:(Boolean) -> Unit,
+    onExpandedChange: () -> Unit,
     noteColor: MutableState<Color>,
     newNoteTitle: String,
+//    onSetNewNote:(String,String) -> Unit,
     setNewNoteTitle: (String) -> Unit,
     newNoteText: String,
     setNewNoteText: (String) -> Unit,
@@ -142,7 +143,7 @@ fun ButtonScreen(
     plusColorAsState: State<Color>,
     onAddTodoItem:(TodoNote) -> Unit
 ) {
-    var modifierAsState = if(isExpanded) Modifier
+    val modifierAsState = if(isExpanded) Modifier
         .fillMaxWidth()
         .padding(rowPaddingAsState.value) else Modifier
     Box(
@@ -161,7 +162,7 @@ fun ButtonScreen(
                 shape = RoundedCornerShape(roundAsState.value),
                 modifier = Modifier.animateContentSize(
                     animationSpec = tween(
-                        delayMillis = 300,
+                        delayMillis = 50,
                         durationMillis = 300,
                         easing = LinearOutSlowInEasing
                     )
@@ -177,7 +178,7 @@ fun ButtonScreen(
                     ) {
                         IconButton(
                             onClick = {
-                                onExpandedChange(!isExpanded)
+                                onExpandedChange()
                                 setNewNoteText("")
                                 setNewNoteTitle("")
                             },
@@ -200,7 +201,9 @@ fun ButtonScreen(
                                             ColorsThemeStateList.itemsList.get("Dark ${userDefinedColor}")!!
                                         )
                                     )
-                                    onExpandedChange(!isExpanded)
+                                    onExpandedChange()
+                                    setNewNoteText("")
+                                    setNewNoteTitle("")
                                 },
                                 shape = RoundedCornerShape(12.dp),
                                 modifier = Modifier
@@ -228,7 +231,7 @@ fun ButtonScreen(
                                //----------------- Note/To-do title
                                NewTodoTextField(
                                    text = newNoteTitle,
-                                   onTextChange = setNewNoteTitle,
+                                   onTextChange = { setNewNoteTitle(it) },
                                    placeHolder = "Enter Title",
                                    maxLines = 1,
                                    modifier = Modifier.fillMaxWidth()
@@ -236,7 +239,7 @@ fun ButtonScreen(
                                // ----------------------- This text field is for Note/To-do description
                                NewTodoTextField(
                                    text = newNoteText,
-                                   onTextChange = setNewNoteText,
+                                   onTextChange = {setNewNoteText(it)},
                                    placeHolder = "Enter Text",
                                    maxLines = Int.MAX_VALUE,
                                    modifier = Modifier
@@ -380,8 +383,14 @@ fun previewFloatingButton() {
     TodoTheme(){
         Surface(color = MaterialTheme.colors.surface){
             CustomFloatingButton(
+                isExpanded  = true,
+                onIsExpandedChange = {},
 //                TodoItems = listOf<TodoNote>(TodoNote("Sample Note","This is a sample Note",Color.Yellow,Color.Gray)),
-                onAddTodoItem = {}
+                onAddTodoItem = {},
+                onSetNewNoteText = {},
+                onSetNewNoteTitle = {},
+                newNoteText = "",
+                newNoteTitle = ""
             )
         }
     }

@@ -16,8 +16,10 @@ class TodoViewModel: ViewModel() {
     //This state is for a todoList
     var todoItems = mutableStateListOf<TodoNote>()
 
+    var isTodoExpanded by mutableStateOf(false)
 
-
+    var editTodoTitle by mutableStateOf("")
+    var editTodoText by mutableStateOf("")
     //event
     fun onCurrentTodoLayoutChange(){
         currentTodoLayoutState = !currentTodoLayoutState
@@ -33,5 +35,19 @@ class TodoViewModel: ViewModel() {
     }
     fun onRemoveTodo(todo:TodoNote){
         todoItems-=todo
+    }
+    fun onTodoExpandedChange(){
+        isTodoExpanded = !isTodoExpanded
+    }
+    fun onEditTodoTitle(title:String){
+        editTodoTitle = title
+    }
+    fun onEditTodoText(text:String){
+        editTodoText= text
+    }
+    fun onTodoEditButton(title:String , text:String){
+        isTodoExpanded = !isTodoExpanded
+        editTodoTitle = title
+        editTodoText = text
     }
 }

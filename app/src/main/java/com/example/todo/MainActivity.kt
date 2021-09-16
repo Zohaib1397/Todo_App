@@ -70,6 +70,7 @@ fun CoverWholeScreen(
             verticalArrangement = Arrangement.Top,
         ){
             CustomSearchBar(
+                todoItems = viewModel.todoItems,
                 searchedItems = viewModel.searchItemsList,
                 onAddSearchItem = viewModel::onAddSearch,
                 searchBarText = viewModel.searchBarText,
@@ -87,7 +88,13 @@ fun CoverWholeScreen(
             TodoScreen(viewModel)
         }
         CustomFloatingButton(
-            onAddTodoItem = viewModel::onAddTodo
+            isExpanded = viewModel.isTodoExpanded,
+            onIsExpandedChange = viewModel::onTodoExpandedChange,
+            onAddTodoItem = viewModel::onAddTodo,
+            newNoteTitle = viewModel.editTodoTitle,
+            newNoteText = viewModel.editTodoText,
+            onSetNewNoteTitle = viewModel::onEditTodoTitle,
+            onSetNewNoteText = viewModel::onEditTodoText
         )
     }
 }
@@ -95,7 +102,7 @@ fun CoverWholeScreen(
 @Composable
 fun TodoScreen(viewModel:TodoViewModel) {
     LazyColumn() {
-        itemsIndexed(viewModel.todoItems) { index,note ->
+        itemsIndexed(if(viewModel.searchBarText.isEmpty()) viewModel.todoItems else SearchItemsList.itemsList) { index,note ->
             Spacer(modifier = Modifier.height(15.dp))
             TodoCard(
                 todoTitle = note.noteTitle,
@@ -103,7 +110,8 @@ fun TodoScreen(viewModel:TodoViewModel) {
                 cardColor = if (isSystemInDarkTheme()) note.darkColor else note.lightColor,
                 index = index,
                 todoItems = viewModel.todoItems,
-                onRemoveTodo = viewModel::onRemoveTodo
+                onRemoveTodo = viewModel::onRemoveTodo,
+                onEditTodo = viewModel::onTodoEditButton
             )
         }
     }

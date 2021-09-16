@@ -4,7 +4,7 @@ import androidx.compose.ui.graphics.Color
 import com.example.todo.ui.theme.*
 
 object SearchItemsList{
-    val itemsList = mutableListOf<String>()
+    val itemsList = mutableListOf<TodoNote>()
 }
 object ColorsThemeStateList{
     val itemsList = mapOf(

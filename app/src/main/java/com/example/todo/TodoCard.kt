@@ -28,7 +28,8 @@ fun TodoCard(
     cardColor: Color = MaterialTheme.colors.surface,
     index:Int,
     todoItems:List<TodoNote>,
-    onRemoveTodo:(TodoNote) -> Unit
+    onRemoveTodo:(TodoNote) -> Unit,
+    onEditTodo:(String,String) -> Unit
 ){
     var isExpanded by remember{mutableStateOf(false)}
     val rotateState by animateFloatAsState(
@@ -77,7 +78,10 @@ fun TodoCard(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.End
                 ){
-                    IconButton(onClick = {/*TODO*/}){
+                    IconButton(onClick = {
+                        onEditTodo(todoTitle,todoNote)
+                        onRemoveTodo(todoItems[index])
+                    }){
                         Icon(painter = painterResource(R.drawable.ic_edit), contentDescription = "Edit Todo")
                     }
                     IconButton(onClick = { onRemoveTodo(todoItems[index]) }){

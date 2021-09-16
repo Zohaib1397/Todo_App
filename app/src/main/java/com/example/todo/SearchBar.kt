@@ -26,12 +26,13 @@ import com.example.todo.ui.theme.TodoTheme
 @ExperimentalMaterialApi
 @Composable
 fun CustomSearchBar(
+    todoItems:List<TodoNote>,
     placeHolder:String = "Search",
     painter: Painter = painterResource(R.drawable.ic_search),
     contentDescription:String = "Search",
     searchBarText:String,
     onSearchBarTextChange:(String) ->Unit,
-    searchedItems: List<String> = SearchItemsList.itemsList,
+    searchedItems: List<String>,
     onAddSearchItem:(String) -> Unit
 ) {
     var isExpanded by remember { mutableStateOf(true) }
@@ -82,6 +83,12 @@ fun CustomSearchBar(
                     keyboardActions = KeyboardActions(
                         onSearch = {
                             onAddSearchItem(searchBarText)
+                            for(todo in todoItems){
+                                if(todo.noteDescription.contains(searchBarText.toString())){
+                                    isExpanded = !isExpanded
+                                    SearchItemsList.itemsList.add(todo)
+                                }
+                            }
                         }
                     )
                 )
@@ -115,6 +122,6 @@ fun CustomSearchBar(
 @Composable
 fun previewSearchBar() {
     TodoTheme {
-        CustomSearchBar(onAddSearchItem = {},searchBarText = "",onSearchBarTextChange = {})
+//        CustomSearchBar(null!!,onAddSearchItem = {},searchBarText = "",onSearchBarTextChange = {})
     }
 }
