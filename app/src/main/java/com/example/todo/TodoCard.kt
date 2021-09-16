@@ -37,7 +37,7 @@ fun TodoCard(
     Card(
         modifier = Modifier.fillMaxWidth(0.9f),
         shape = RoundedCornerShape(12.dp),
-        elevation = 5.dp
+        elevation = 2.dp
     ) {
         Column(
             modifier = Modifier

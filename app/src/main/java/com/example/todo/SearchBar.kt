@@ -37,14 +37,14 @@ fun CustomSearchBar(
     var isExpanded by remember { mutableStateOf(true) }
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        elevation = 5.dp
+        elevation = 2.dp
     ) {
         Surface(
             modifier = Modifier
                 .fillMaxWidth(0.9f)
                 .padding(30.dp),
             shape = RoundedCornerShape(10.dp),
-            elevation = 5.dp
+            elevation = 2.dp
         ) {
             Column(
                 modifier = Modifier.animateContentSize(

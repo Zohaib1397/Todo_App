@@ -4,7 +4,6 @@ import android.content.res.Configuration
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
@@ -18,11 +17,11 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.todo.ui.theme.TodoTheme
 
 @ExperimentalComposeUiApi
@@ -32,7 +31,7 @@ import com.example.todo.ui.theme.TodoTheme
 fun CustomFloatingButton(
     onAddTodoItem:(TodoNote)->Unit
 ) {
-    var isExpanded by remember { mutableStateOf(true) }
+    var isExpanded by remember { mutableStateOf(false) }
     var alignment = animateFloatAsState(
         animationSpec = tween(
         durationMillis = 300,
@@ -50,14 +49,30 @@ fun CustomFloatingButton(
         }
     var roundAsState = animateDpAsState(
         animationSpec = tween(
+            delayMillis = 700,
             durationMillis = 300,
             easing = LinearOutSlowInEasing
         ),
         targetValue = if (isExpanded) 0.dp else 30.dp
     )
-    var plusColorAsState = animateColorAsState(
+    var paddingAsState = animateDpAsState(
         animationSpec = tween(
             durationMillis = 400,
+            easing = LinearOutSlowInEasing
+        ),
+        targetValue = if (isExpanded) 0.dp else 20.dp
+    )
+    var rowPaddingAsState = animateDpAsState(
+        animationSpec = tween(
+            delayMillis = 600,
+            durationMillis = 400,
+            easing = LinearOutSlowInEasing
+        ),
+        targetValue = if (isExpanded) 15.dp else 0.dp
+    )
+    var plusColorAsState = animateColorAsState(
+        animationSpec = tween(
+            durationMillis = 800,
             easing = FastOutLinearInEasing
         ),
         targetValue = if (isExpanded) if (isSystemInDarkTheme()) Color.White else Color.Black else Color.White
@@ -81,6 +96,8 @@ fun CustomFloatingButton(
     var (newNoteText,setNewNoteText) = remember { mutableStateOf("") }
     //This Composable is StateLess
     ButtonScreen(
+        paddingAsState,
+        rowPaddingAsState,
         roundAsState,
         alignment,
         buttonColorAsState,
@@ -106,6 +123,8 @@ fun CustomFloatingButton(
 // this composable is StateLess
 @Composable
 fun ButtonScreen(
+    paddingAsState: State<Dp>,
+    rowPaddingAsState: State<Dp>,
     roundAsState: State<Dp>,
     alignment: State<Float>,
     buttonColorAsState: State<Color>,
@@ -123,16 +142,18 @@ fun ButtonScreen(
     plusColorAsState: State<Color>,
     onAddTodoItem:(TodoNote) -> Unit
 ) {
+    var modifierAsState = if(isExpanded) Modifier
+        .fillMaxWidth()
+        .padding(rowPaddingAsState.value) else Modifier
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(roundAsState.value)
-            .background(color = Color.Transparent),
+            .padding(paddingAsState.value),
         contentAlignment = BiasAlignment(alignment.value, alignment.value)
     ) {
         Surface(
             shape = RoundedCornerShape(roundAsState.value),
-            elevation = 5.dp
+            elevation = 2.dp
         ) {
             //This part of animation will be responsible for having opening transition
             Surface(
@@ -146,45 +167,29 @@ fun ButtonScreen(
                     )
                 )
             ) {
-                if (isExpanded) {
-                    Surface(
-                        color = noteColor.value,
-                        modifier = Modifier
-                            .fillMaxSize(),
-                        shape = MaterialTheme.shapes.large,
+               Column(
+                   verticalArrangement = Arrangement.Top
+               ) {
+                    Row(
+                        modifier = modifierAsState,
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(40.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.SpaceBetween
+                        IconButton(
+                            onClick = {
+                                onExpandedChange(!isExpanded)
+                                setNewNoteText("")
+                                setNewNoteTitle("")
+                            },
+                            modifier = Modifier.rotate(buttonRotationAsState.value)
                         ) {
-                            //----------------- Note/To-do title
-                            NewTodoTextField(
-                                text = newNoteTitle,
-                                onTextChange = setNewNoteTitle,
-                                placeHolder = "Enter Title",
-                                maxLines = 1,
-                                modifier = Modifier.fillMaxWidth()
+                            Icon(
+                                painter = painterResource(R.drawable.ic_add),
+                                contentDescription = "Add Todo",
+                                tint = plusColorAsState.value
                             )
-                            Spacer(modifier = Modifier.height(12.dp))
-                            // ----------------------- This text field is for Note/To-do description
-                            NewTodoTextField(
-                                text = newNoteText,
-                                onTextChange = setNewNoteText,
-                                placeHolder = "Enter Text",
-                                maxLines = 4,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .heightIn(300.dp, 500.dp)
-                            )
-                            //------------------ This part of code is used to display Color Buttons in the bottom floating button menu
-                            //------------------ Used to Trigger note colors
-                            ColorButtonsRow(noteColor, noteColorAsThemeState) {
-                                onUserDefinedColorChange(it)
-                            }
-                            //------------ Save button to load the data to database
+                        }
+                        if (isExpanded) {
                             Button(
                                 onClick = {
                                     onAddTodoItem(
@@ -199,27 +204,55 @@ fun ButtonScreen(
                                 },
                                 shape = RoundedCornerShape(12.dp),
                                 modifier = Modifier
-                                    .fillMaxWidth(0.8f)
-                                    .height(45.dp)
+                                    .padding(end = 20.dp)
+                                    .fillMaxWidth(.35f)
+                                    .height(35.dp)
                             ) {
-                                Text("Save")
+                                Text("Done",fontSize = 14.sp)
                             }
                         }
                     }
-                }
-                IconButton(
-                    onClick = {
-                        onExpandedChange(!isExpanded)
-                        setNewNoteText("")
-                        setNewNoteTitle("")
-                    },
-                    modifier = Modifier.rotate(buttonRotationAsState.value)
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_add),
-                        contentDescription = "Add Todo",
-                        tint = plusColorAsState.value
-                    )
+                    if (isExpanded) {
+                       Surface(
+                           color = noteColor.value,
+                           modifier = Modifier
+                               .fillMaxSize(),
+                           shape = MaterialTheme.shapes.large,
+                       ) {
+                           Column(
+                               modifier = Modifier
+                                   .padding(40.dp),
+                               horizontalAlignment = Alignment.CenterHorizontally,
+                               verticalArrangement = Arrangement.SpaceBetween
+                           ) {
+                               //----------------- Note/To-do title
+                               NewTodoTextField(
+                                   text = newNoteTitle,
+                                   onTextChange = setNewNoteTitle,
+                                   placeHolder = "Enter Title",
+                                   maxLines = 1,
+                                   modifier = Modifier.fillMaxWidth()
+                               )
+                               // ----------------------- This text field is for Note/To-do description
+                               NewTodoTextField(
+                                   text = newNoteText,
+                                   onTextChange = setNewNoteText,
+                                   placeHolder = "Enter Text",
+                                   maxLines = Int.MAX_VALUE,
+                                   modifier = Modifier
+                                       .fillMaxWidth()
+                                       .fillMaxHeight(0.8f)
+                               )
+                               //------------------ This part of code is used to display Color Buttons in the bottom floating button menu
+                               //------------------ Used to Trigger note colors
+                               ColorButtonsRow(noteColor, noteColorAsThemeState) {
+                                   onUserDefinedColorChange(it)
+                               }
+                               //------------ Save button to load the data to database
+
+                           }
+                       }
+                    }
                 }
             }
         }
