@@ -35,7 +35,8 @@ fun CustomFloatingButton(
     onSetNewNoteText :(String) -> Unit,
     isExpanded: Boolean,
     onIsExpandedChange: () -> Unit,
-    onAddTodoItem:(TodoNote)->Unit
+    onAddTodoItem:(TodoNote)->Unit,
+    saveToSharedPreference:() ->Unit
 ) {
     var alignment = animateFloatAsState(
         animationSpec = tween(
@@ -117,7 +118,8 @@ fun CustomFloatingButton(
         },
         buttonRotationAsState,
         plusColorAsState,
-        onAddTodoItem
+        onAddTodoItem,
+        saveToSharedPreference
     )
 }
 // this composable is StateLess
@@ -141,7 +143,8 @@ fun ButtonScreen(
     onUserDefinedColorChange:(String)->Unit,
     buttonRotationAsState: State<Float>,
     plusColorAsState: State<Color>,
-    onAddTodoItem:(TodoNote) -> Unit
+    onAddTodoItem:(TodoNote) -> Unit,
+    saveToSharedPreference:() -> Unit
 ) {
     val modifierAsState = if(isExpanded) Modifier
         .fillMaxWidth()
@@ -201,6 +204,7 @@ fun ButtonScreen(
                                             ColorsThemeStateList.itemsList.get("Dark ${userDefinedColor}")!!
                                         )
                                     )
+                                    saveToSharedPreference()
                                     onExpandedChange()
                                     setNewNoteText("")
                                     setNewNoteTitle("")
@@ -390,7 +394,8 @@ fun previewFloatingButton() {
                 onSetNewNoteText = {},
                 onSetNewNoteTitle = {},
                 newNoteText = "",
-                newNoteTitle = ""
+                newNoteTitle = "",
+                saveToSharedPreference = {}
             )
         }
     }

@@ -29,7 +29,8 @@ fun TodoCard(
     index:Int,
     todoItems:List<TodoNote>,
     onRemoveTodo:(TodoNote) -> Unit,
-    onEditTodo:(String,String) -> Unit
+    onEditTodo:(String,String) -> Unit,
+    saveToSharedPreference:() -> Unit
 ){
     var isExpanded by remember{mutableStateOf(false)}
     val rotateState by animateFloatAsState(
@@ -81,10 +82,14 @@ fun TodoCard(
                     IconButton(onClick = {
                         onEditTodo(todoTitle,todoNote)
                         onRemoveTodo(todoItems[index])
+                        saveToSharedPreference()
                     }){
                         Icon(painter = painterResource(R.drawable.ic_edit), contentDescription = "Edit Todo")
                     }
-                    IconButton(onClick = { onRemoveTodo(todoItems[index]) }){
+                    IconButton(onClick = {
+                        onRemoveTodo(todoItems[index])
+                        saveToSharedPreference()
+                    }){
                         Icon(painter = painterResource(R.drawable.ic_delete), contentDescription = "Delete Todo")
                     }
                 }

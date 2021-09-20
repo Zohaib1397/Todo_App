@@ -26,7 +26,6 @@ import com.example.todo.ui.theme.TodoTheme
 @ExperimentalMaterialApi
 @Composable
 fun CustomSearchBar(
-    todoItems:List<TodoNote>,
     placeHolder:String = "Search",
     painter: Painter = painterResource(R.drawable.ic_search),
     contentDescription:String = "Search",

@@ -1,5 +1,6 @@
 package com.example.todo
 
+import android.content.Context
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.compose.setContent
@@ -9,6 +10,7 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -28,6 +30,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.todo.ui.theme.TodoTheme
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
 class MainActivity : AppCompatActivity() {
     private val viewModel by viewModels<TodoViewModel>()
@@ -36,26 +40,48 @@ class MainActivity : AppCompatActivity() {
     @ExperimentalMaterialApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val sharedPref = getSharedPreferences("TodoNote",Context.MODE_PRIVATE)
+        val editor = sharedPref.edit()
+        val TodoJsonLoad = sharedPref.getString("todoList",null)
+        TodoJsonLoad?.let{
+            val TodoType = object : TypeToken<List<TodoNote>>() {}.type
+            val list = Gson().fromJson<List<TodoNote>>(it, TodoType)
+            list?.let{ newList ->
+                for (items in newList) {
+                    viewModel.onAddTodo(items)
+                }
+            }
+        }
         setContent {
             TodoTheme {
                 Box(modifier = Modifier.fillMaxSize()){
                     Surface(color = MaterialTheme.colors.background) {
-                        CoverWholeScreen(viewModel = viewModel, modifier = Modifier.fillMaxSize())
+                        CoverWholeScreen(viewModel = viewModel, modifier = Modifier.fillMaxSize()){
+                            val TodoJson = Gson().toJson(viewModel.todoItems)
+                            editor.apply{
+                                putString("todoList",TodoJson)
+                                apply()
+                            }
+                        }
                     }
                 }
             }
         }
+
+
     }
+
 }
+
 @ExperimentalComposeUiApi
 @ExperimentalAnimationApi
 @ExperimentalMaterialApi
 @Composable
 fun CoverWholeScreen(
     viewModel:TodoViewModel,
-    modifier:Modifier = Modifier
+    modifier:Modifier = Modifier,
+    saveToSharedPreference:() -> Unit
 ){
-
     Scaffold(
         modifier = modifier
     ){
@@ -70,7 +96,6 @@ fun CoverWholeScreen(
             verticalArrangement = Arrangement.Top,
         ){
             CustomSearchBar(
-                todoItems = viewModel.todoItems,
                 searchedItems = viewModel.searchItemsList,
                 onAddSearchItem = viewModel::onAddSearch,
                 searchBarText = viewModel.searchBarText,
@@ -85,7 +110,10 @@ fun CoverWholeScreen(
 //            Spacer(modifier = Modifier.height(15.dp))
 //            CustomDivider("Unpinned Todo")
             Spacer(modifier = Modifier.height(15.dp))
-            TodoScreen(viewModel)
+            TodoScreen(
+                viewModel,
+                saveToSharedPreference = saveToSharedPreference
+            )
         }
         CustomFloatingButton(
             isExpanded = viewModel.isTodoExpanded,
@@ -94,13 +122,17 @@ fun CoverWholeScreen(
             newNoteTitle = viewModel.editTodoTitle,
             newNoteText = viewModel.editTodoText,
             onSetNewNoteTitle = viewModel::onEditTodoTitle,
-            onSetNewNoteText = viewModel::onEditTodoText
+            onSetNewNoteText = viewModel::onEditTodoText,
+            saveToSharedPreference = saveToSharedPreference
         )
     }
 }
 
 @Composable
-fun TodoScreen(viewModel:TodoViewModel) {
+fun TodoScreen(
+    viewModel:TodoViewModel,
+    saveToSharedPreference: () -> Unit
+) {
     val searchedItemsList= mutableListOf<TodoNote>()
     for(todo in viewModel.todoItems){
         if(todo.noteDescription.contains(viewModel.searchBarText.toString())||todo.noteTitle.contains(viewModel.searchBarText.toString())){
@@ -119,7 +151,8 @@ fun TodoScreen(viewModel:TodoViewModel) {
                 index = index,
                 todoItems = viewModel.todoItems,
                 onRemoveTodo = viewModel::onRemoveTodo,
-                onEditTodo = viewModel::onTodoEditButton
+                onEditTodo = viewModel::onTodoEditButton,
+                saveToSharedPreference = saveToSharedPreference
             )
         }
     }
@@ -138,7 +171,9 @@ fun TodoScreen(viewModel:TodoViewModel) {
 fun showPreview(){
     TodoTheme {
         Surface(color = MaterialTheme.colors.background) {
-            CoverWholeScreen(TodoViewModel(),modifier = Modifier.fillMaxSize())
+            CoverWholeScreen(TodoViewModel(),modifier = Modifier.fillMaxSize()){
+
+            }
         }
     }
 }
