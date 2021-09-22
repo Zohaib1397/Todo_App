@@ -16,10 +16,11 @@ import com.example.todo.ui.theme.TodoTheme
 @Composable
 fun LayoutSwitcher(
     currentLayoutState: LayoutState,
+    modifier: Modifier = Modifier,
     onLayoutChange:() -> Unit
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth().padding(start = 25.dp,end = 15.dp),
+        modifier = modifier.fillMaxWidth().padding(start = 25.dp,end = 15.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {

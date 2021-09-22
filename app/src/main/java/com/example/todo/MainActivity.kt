@@ -32,6 +32,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.toLowerCase
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.todo.ui.theme.TodoTheme
@@ -139,19 +140,19 @@ fun TodoScreen(
     val scrollState = rememberScrollState()
     val searchedItemsList= mutableListOf<TodoNote>()
     for(todo in viewModel.todoItems){
-        if(todo.noteDescription.contains(viewModel.searchBarText)||todo.noteTitle.contains(viewModel.searchBarText)){
+        if(todo.noteDescription.lowercase().contains(viewModel.searchBarText.lowercase())||todo.noteTitle.lowercase().contains(viewModel.searchBarText.lowercase())){
             searchedItemsList.add(todo)
         }
     }
-    if(viewModel.currentTodoLayoutState == LayoutState.Linear_Layout) {
-        LayoutSwitcher(
+    LayoutSwitcher(
         currentLayoutState = viewModel.currentTodoLayoutState,
         onLayoutChange = viewModel::onCurrentTodoLayoutChange
-        )
-        LazyColumn(contentPadding= PaddingValues(20.dp)) {
-            item{
+    )
+    if(viewModel.currentTodoLayoutState == LayoutState.Linear_Layout) {
 
-            }
+        LazyColumn(
+            contentPadding= PaddingValues(start = 20.dp,end = 20.dp , bottom = 20.dp),
+            ) {
             itemsIndexed(
                 if(viewModel.searchBarText.isEmpty())viewModel.todoItems else searchedItemsList
                     ) { index,note ->
@@ -174,10 +175,6 @@ fun TodoScreen(
     Column(
         modifier = Modifier.verticalScroll(scrollState)
     ){
-        LayoutSwitcher(
-            currentLayoutState = viewModel.currentTodoLayoutState,
-            onLayoutChange = viewModel::onCurrentTodoLayoutChange
-        )
         StaggeredVerticalGrid(
             modifier = Modifier
                 .padding(20.dp),

@@ -19,10 +19,6 @@ fun StaggeredVerticalGrid(
     Layout(
         children,
         modifier = modifier
-            .scrollable(
-                state = scrollState,
-                orientation = Orientation.Vertical
-            ),
     ) { measurables, constraints ->
         check(constraints.hasBoundedWidth) {
             "Unbounded width not supported"

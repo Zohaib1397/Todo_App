@@ -89,7 +89,6 @@ fun TodoCard(
                 }
             }
             if(isExpanded == Expanded.True){
-                Divider(modifier =Modifier.fillMaxWidth(),color = Color.Gray)
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.End
