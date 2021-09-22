@@ -6,6 +6,7 @@ import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -21,23 +22,34 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.todo.ui.theme.TodoTheme
 
+private enum class Expanded{
+    True,
+    False
+}
+
 @Composable
 fun TodoCard(
     todoTitle:String,
     todoNote:String,
     cardColor: Color = MaterialTheme.colors.surface,
     index:Int,
+    modifier: Modifier = Modifier,
     todoItems:List<TodoNote>,
     onRemoveTodo:(TodoNote) -> Unit,
     onEditTodo:(String,String) -> Unit,
-    saveToSharedPreference:() -> Unit
+    saveToSharedPreference:() -> Unit,
 ){
-    var isExpanded by remember{mutableStateOf(false)}
+    var isExpanded by remember{mutableStateOf(Expanded.False)}
     val rotateState by animateFloatAsState(
-        if(isExpanded) 180f else 0f
+        if(isExpanded == Expanded.True) 180f else 0f
     )
     Card(
-        modifier = Modifier.fillMaxWidth(0.9f),
+        modifier = modifier.clickable {
+             isExpanded = when(isExpanded){
+                 Expanded.False -> Expanded.True
+                 Expanded.True -> Expanded.False
+             }
+        },
         shape = RoundedCornerShape(12.dp),
         elevation = 2.dp
     ) {
@@ -58,14 +70,17 @@ fun TodoCard(
             )
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
+                verticalAlignment = Alignment.Bottom,
                 horizontalArrangement = Arrangement.SpaceBetween
             ){
                 Text(
                     text = todoNote,
-                    modifier = Modifier.padding(start = 20.dp)
+                    modifier = Modifier.padding(start = 20.dp,bottom = 12.dp).fillMaxWidth(0.8f)
                 )
-                IconButton(onClick = { isExpanded = !isExpanded }) {
+                IconButton(onClick = { isExpanded = when(isExpanded){
+                    Expanded.False -> Expanded.True
+                    Expanded.True -> Expanded.False
+                } }) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_arrow_down),
                         contentDescription = "DropDown",
@@ -73,7 +88,7 @@ fun TodoCard(
                     )
                 }
             }
-            if(isExpanded){
+            if(isExpanded == Expanded.True){
                 Divider(modifier =Modifier.fillMaxWidth(),color = Color.Gray)
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -107,6 +122,24 @@ fun TodoCard(
 @Composable
 fun previewTodoCard() {
     TodoTheme {
-//        TodoCard("Todo Title","This is a sample Todo" )
+        Box(modifier = Modifier.fillMaxSize()){
+            TodoCard(
+                "Todo Title",
+                "This is a sample Todo long long todo Note ever ever ever long note hihihihi",
+                ColorsThemeStateList.itemsList.get("Light Yellow")!!,
+                0,
+                todoItems = listOf(
+                    TodoNote(
+                        "Todo Title",
+                        "This is a sample Todo",
+                        ColorsThemeStateList.itemsList.get("Light Yellow")!!,
+                        ColorsThemeStateList.itemsList.get("Dark Yellow")!!
+                    )
+                ),
+                onRemoveTodo = {},
+                saveToSharedPreference = {},
+                onEditTodo = fun(title: String, text: String) {}
+            )
+        }
     }
 }

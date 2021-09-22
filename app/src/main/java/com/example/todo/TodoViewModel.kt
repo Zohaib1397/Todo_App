@@ -5,10 +5,15 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 
+enum class LayoutState{
+    Grid_Layout,
+    Linear_Layout
+}
+
 class TodoViewModel: ViewModel() {
     //state
     //This state is for LayoutSwithcer
-    var currentTodoLayoutState by mutableStateOf(true)
+    var currentTodoLayoutState by mutableStateOf(LayoutState.Linear_Layout)
     //This State is for the list of searched Items
     var searchItemsList = mutableStateListOf<String>()
     //This state is for text inside Search bar
@@ -27,12 +32,12 @@ class TodoViewModel: ViewModel() {
     var editTodoText by mutableStateOf("")
 
 
-    var searchedTodos = mutableStateListOf<TodoNote>()
-
-
     //event
     fun onCurrentTodoLayoutChange(){
-        currentTodoLayoutState = !currentTodoLayoutState
+        currentTodoLayoutState = when(currentTodoLayoutState){
+            LayoutState.Linear_Layout -> LayoutState.Grid_Layout
+            LayoutState.Grid_Layout -> LayoutState.Linear_Layout
+        }
     }
     fun onAddSearch(data:String){
         searchItemsList += data
@@ -59,12 +64,5 @@ class TodoViewModel: ViewModel() {
         isTodoExpanded = !isTodoExpanded
         editTodoTitle = title
         editTodoText = text
-    }
-    fun getSearchedTodos(todoList:List<TodoNote>){
-        for(todo in todoList){
-            if(todo.noteDescription.contains(searchBarText.toString())){
-                searchedTodos
-            }
-        }
     }
 }

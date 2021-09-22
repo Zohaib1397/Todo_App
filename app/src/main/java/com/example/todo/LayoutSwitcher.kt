@@ -15,7 +15,7 @@ import com.example.todo.ui.theme.TodoTheme
 
 @Composable
 fun LayoutSwitcher(
-    currentLayoutState: Boolean,
+    currentLayoutState: LayoutState,
     onLayoutChange:() -> Unit
 ) {
     Row(
@@ -24,19 +24,19 @@ fun LayoutSwitcher(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
-            text = if(currentLayoutState)"Linear View" else "Gird View",
+            text = if(currentLayoutState == LayoutState.Linear_Layout)"Linear View" else "Gird View",
             fontWeight = FontWeight.Bold,
             fontStyle = FontStyle.Italic,
         )
         IconButton(onClick = onLayoutChange  ) {
             Icon(
-                painter = if(currentLayoutState)
+                painter = if(currentLayoutState == LayoutState.Linear_Layout)
                     painterResource(
                         R.drawable.ic_linear_view
                     )else painterResource(
                     id = R.drawable.ic_grid_view
                 ),
-                contentDescription = if(currentLayoutState)"Linear View" else "Gird View",
+                contentDescription = if(currentLayoutState == LayoutState.Linear_Layout)"Linear View" else "Gird View",
                 tint = Color.Unspecified
             )
         }
@@ -47,6 +47,6 @@ fun LayoutSwitcher(
 @Preview("Light Mode")
 fun PreviewLayoutSwitcher() {
     TodoTheme {
-        LayoutSwitcher(true,{})
+        LayoutSwitcher(LayoutState.Linear_Layout) {}
     }
 }
