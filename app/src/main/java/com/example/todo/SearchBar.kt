@@ -4,6 +4,7 @@ import android.content.res.Configuration
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -95,7 +96,9 @@ fun CustomSearchBar(
                                     start = 20.dp,
                                     top = 12.dp,
                                     bottom = 12.dp
-                                )
+                                ).clickable {
+                                    onSearchBarTextChange(item)
+                                }
                             )
                         }
                     }
