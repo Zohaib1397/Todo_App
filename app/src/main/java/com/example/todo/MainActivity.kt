@@ -107,10 +107,6 @@ fun CoverWholeScreen(
                 searchBarText = viewModel.searchBarText,
                 onSearchBarTextChange = viewModel::onSearchBarTextChange
             )
-            LayoutSwitcher(
-                currentLayoutState = viewModel.currentTodoLayoutState,
-                onLayoutChange = viewModel::onCurrentTodoLayoutChange
-            )
 //            CustomDivider("Pinned Todo")
 //            Spacer(modifier = Modifier.height(15.dp))
 //            Spacer(modifier = Modifier.height(15.dp))
@@ -140,35 +136,48 @@ fun TodoScreen(
     viewModel:TodoViewModel,
     saveToSharedPreference: () -> Unit
 ) {
+    val scrollState = rememberScrollState()
     val searchedItemsList= mutableListOf<TodoNote>()
     for(todo in viewModel.todoItems){
         if(todo.noteDescription.contains(viewModel.searchBarText)||todo.noteTitle.contains(viewModel.searchBarText)){
             searchedItemsList.add(todo)
         }
     }
-    if(viewModel.currentTodoLayoutState == LayoutState.Linear_Layout)
-    LazyColumn(contentPadding= PaddingValues(20.dp)) {
-        itemsIndexed(
-            if(viewModel.searchBarText.isEmpty())viewModel.todoItems else searchedItemsList
-                ) { index,note ->
-            Spacer(modifier = Modifier.height(15.dp))
-            TodoCard(
-                todoTitle = note.noteTitle,
-                todoNote = note.noteDescription,
-                cardColor = if (isSystemInDarkTheme()) note.darkColor else note.lightColor,
-                index = index,
-                todoItems = viewModel.todoItems,
-                onRemoveTodo = viewModel::onRemoveTodo,
-                onEditTodo = viewModel::onTodoEditButton,
-                saveToSharedPreference = saveToSharedPreference,
-                modifier = Modifier.fillMaxWidth()
-            )
+    if(viewModel.currentTodoLayoutState == LayoutState.Linear_Layout) {
+        LayoutSwitcher(
+        currentLayoutState = viewModel.currentTodoLayoutState,
+        onLayoutChange = viewModel::onCurrentTodoLayoutChange
+        )
+        LazyColumn(contentPadding= PaddingValues(20.dp)) {
+            item{
+
+            }
+            itemsIndexed(
+                if(viewModel.searchBarText.isEmpty())viewModel.todoItems else searchedItemsList
+                    ) { index,note ->
+                Spacer(modifier = Modifier.height(15.dp))
+                TodoCard(
+                    todoTitle = note.noteTitle,
+                    todoNote = note.noteDescription,
+                    cardColor = if (isSystemInDarkTheme()) note.darkColor else note.lightColor,
+                    index = index,
+                    todoItems = viewModel.todoItems,
+                    onRemoveTodo = viewModel::onRemoveTodo,
+                    onEditTodo = viewModel::onTodoEditButton,
+                    saveToSharedPreference = saveToSharedPreference,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
         }
     }
     else
     Column(
-        modifier = Modifier.verticalScroll(rememberScrollState())
+        modifier = Modifier.verticalScroll(scrollState)
     ){
+        LayoutSwitcher(
+            currentLayoutState = viewModel.currentTodoLayoutState,
+            onLayoutChange = viewModel::onCurrentTodoLayoutChange
+        )
         StaggeredVerticalGrid(
             modifier = Modifier
                 .padding(20.dp),
