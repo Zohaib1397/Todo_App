@@ -134,7 +134,6 @@ fun ButtonScreen(
     onExpandedChange: () -> Unit,
     noteColor: MutableState<Color>,
     newNoteTitle: String,
-//    onSetNewNote:(String,String) -> Unit,
     setNewNoteTitle: (String) -> Unit,
     newNoteText: String,
     setNewNoteText: (String) -> Unit,
@@ -238,7 +237,9 @@ fun ButtonScreen(
                                    onTextChange = { setNewNoteTitle(it) },
                                    placeHolder = "Enter Title",
                                    maxLines = 1,
-                                   modifier = Modifier.fillMaxWidth()
+                                   maxLength = 20,
+                                   modifier = Modifier.fillMaxWidth(),
+                                   noteColorAsThemeState = noteColorAsThemeState
                                )
                                // ----------------------- This text field is for Note/To-do description
                                NewTodoTextField(
@@ -246,17 +247,17 @@ fun ButtonScreen(
                                    onTextChange = {setNewNoteText(it)},
                                    placeHolder = "Enter Text",
                                    maxLines = Int.MAX_VALUE,
+                                   maxLength = Int.MAX_VALUE,
                                    modifier = Modifier
                                        .fillMaxWidth()
-                                       .fillMaxHeight(0.8f)
+                                       .fillMaxHeight(0.8f),
+                                   noteColorAsThemeState = noteColorAsThemeState
                                )
-                               //------------------ This part of code is used to display Color Buttons in the bottom floating button menu
-                               //------------------ Used to Trigger note colors
+                               //This part of code is used to display Color Buttons in the bottom floating button menu
+                               //Used to Trigger note colors
                                ColorButtonsRow(noteColor, noteColorAsThemeState) {
                                    onUserDefinedColorChange(it)
                                }
-                               //------------ Save button to load the data to database
-
                            }
                        }
                     }
@@ -272,21 +273,53 @@ fun NewTodoTextField(
     onTextChange:(String) -> Unit,
     placeHolder:String,
     maxLines:Int,
-    modifier:Modifier
+    maxLength:Int,
+    modifier:Modifier,
+    noteColorAsThemeState: MutableState<String>
 ){
-    TextField(
-        value = text, onValueChange = { onTextChange(it) },
-        placeholder = {
-            Text(placeHolder)
-        },
-        colors = TextFieldDefaults.textFieldColors(
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent,
-        ),
-        shape = RoundedCornerShape(8.dp),
-        maxLines = maxLines,
-        modifier = modifier
-    )
+    Column(
+        horizontalAlignment = Alignment.End
+    ) {
+        Surface(
+            elevation = 2.dp,
+            shape = RoundedCornerShape(20.dp)
+        ) {
+            TextField(
+                value = text,
+                onValueChange = {
+                    if(it.length <= maxLength) onTextChange(it)
+                  },
+                placeholder = {
+                    Text(placeHolder)
+                },
+                colors = TextFieldDefaults.textFieldColors(
+                    backgroundColor =
+                    ColorsThemeStateList.itemsList.get("${noteColorAsThemeState.value} White")!!,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                ),
+                shape = RoundedCornerShape(8.dp),
+                maxLines = maxLines,
+                modifier = modifier,
+            )
+        }
+        Spacer(modifier = Modifier.height(5.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ){
+            if(text.length == maxLength){
+                Text("Reached max limit",color = MaterialTheme.colors.error)
+            }else{
+                Spacer(modifier= Modifier)
+            }
+            Text("${text.length}/$maxLength",
+                color = if(text.length == maxLength)
+                    MaterialTheme.colors.error else Color.Unspecified
+                    )
+        }
+    }
+
 }
 @Composable
 fun ColorButtonsRow(
